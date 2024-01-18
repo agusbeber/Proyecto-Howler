@@ -18,6 +18,6 @@ La temática elegida para la base de datos parte como una aplicación de distrib
 
 ### ✔Avance
 
-#### [Diagrama Entidad Relación (DER)](https://drive.google.com/file/d/1wNtplgEZBtv6et4n9XqQUEfjhOhweGSF/view?usp=sharing)
+#### [Diagrama Entidad Relación (DER)](https://drive.google.com/file/d/1OeulYFTXOQyInPpmJAyFi2MZvx3bcj9y/view?usp=sharing)
 
 #### [Detalle de tablas y columnas](https://docs.google.com/spreadsheets/u/0/d/1ISVfIx2EdfUp-l5D3Ln8lvDFxH0DXoDkp2Y8Hz0zgWc/edit)
