@@ -85,32 +85,36 @@ CREATE TABLE playlists_content (
     
 ALTER TABLE users
 ADD CONSTRAINT fk_users_gender
-FOREIGN KEY (id_gender) references gender (id);
+FOREIGN KEY (id_gender) REFERENCES gender (id);
 
 ALTER TABLE user_profile
 ADD CONSTRAINT fk_users_profile_users
-FOREIGN KEY (id_user) references users (id);
+FOREIGN KEY (id_user) REFERENCES users (id);
 
 ALTER TABLE premium_users
 ADD CONSTRAINT fk_premium_users_users
-FOREIGN KEY (id_user) references users (id);
+FOREIGN KEY (id_user) REFERENCES users (id);
 
 ALTER TABLE premium_users
 ADD CONSTRAINT fk_premium_users_premium_membership
-FOREIGN KEY (id_membership) references premium_membership (id);
+FOREIGN KEY (id_membership) REFERENCES premium_membership (id);
 
 ALTER TABLE artists
 ADD CONSTRAINT fk_artists_genre
-FOREIGN KEY (id_genre) references genres (id);
+FOREIGN KEY (id_genre) REFERENCES genres (id);
 
 ALTER TABLE songs
 ADD CONSTRAINT fk_songs_artists
-FOREIGN KEY (id_artist) references artists (id);
+FOREIGN KEY (id_artist) REFERENCES artists (id);
+
+ALTER TABLE playlists
+ADD CONSTRAINT fk_playlists_users
+FOREIGN KEY (id_user) REFERENCES users (id);
 
 ALTER TABLE playlists_content
 ADD CONSTRAINT fk_playlists_content_playlists
-FOREIGN KEY (id_list) references playlists (id);
+FOREIGN KEY (id_list) REFERENCES playlists (id);
 
 ALTER TABLE playlists_content
 ADD CONSTRAINT fk_playlists_content_songs
-FOREIGN KEY (id_song) references songs (id);
+FOREIGN KEY (id_song) REFERENCES songs (id);
