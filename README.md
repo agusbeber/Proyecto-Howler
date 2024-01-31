@@ -1,6 +1,6 @@
 # SQL
 #### Comisión: 50070
-#### Alumno: Agustín Beber
+#### Estudiante: Agustín Beber
 
 ## Proyecto "Howler": Servicio de música
 
