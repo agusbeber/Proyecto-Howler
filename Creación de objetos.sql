@@ -89,7 +89,45 @@ BEGIN
     END IF;
 END //
 
+DELIMITER //
+CREATE TRIGGER check_exist_user
+BEFORE INSERT ON users
+FOR EACH ROW
+BEGIN
+    DECLARE email_count INT;
+
+    SELECT COUNT(*) INTO email_count
+    FROM users
+    WHERE email = NEW.email;
+
+    IF email_count > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El usuario ya se encuentra registrado.';
+    END IF;
+END;
+//
+
 -- GENERACIÓN DE STORED PROCEDURES
+
+DELIMITER //
+CREATE PROCEDURE setup_user(
+    IN p_firts_name VARCHAR(255),
+    IN p_last_name VARCHAR(255),
+    IN p_gender VARCHAR(255),
+    IN p_birthday DATE,
+    IN p_country VARCHAR(255),
+    IN p_email VARCHAR(255),
+    IN p_pass VARCHAR(255))
+BEGIN
+	DECLARE p_id_gender INT;
+	
+    SELECT id INTO p_id_gender 
+    FROM gender
+    WHERE gender_name = p_gender;
+
+    INSERT INTO users (first_name, last_name, id_gender, birthday, country, email, pass, registered_at, updated_at, premium)
+    VALUES (p_firts_name, p_last_name, p_id_gender, p_birthday, p_country, p_email, p_pass, NOW(), NOW(), 0);
+END //
 
 DELIMITER //
 CREATE PROCEDURE set_premium_on(
