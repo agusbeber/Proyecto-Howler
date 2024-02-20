@@ -385,7 +385,7 @@ END;
 
 DELIMITER //
 CREATE PROCEDURE setup_user(
-    IN p_firts_name VARCHAR(255),
+    IN p_first_name VARCHAR(255),
     IN p_last_name VARCHAR(255),
     IN p_gender VARCHAR(255),
     IN p_birthday DATE,
@@ -400,7 +400,7 @@ BEGIN
     WHERE gender_name = p_gender;
 
     INSERT INTO users (first_name, last_name, id_gender, birthday, country, email, pass, registered_at, updated_at, premium)
-    VALUES (p_firts_name, p_last_name, p_id_gender, p_birthday, p_country, p_email, p_pass, NOW(), NOW(), 0);
+    VALUES (p_first_name, p_last_name, p_id_gender, p_birthday, p_country, p_email, p_pass, NOW(), NOW(), 0);
 END //
 
 DELIMITER //
