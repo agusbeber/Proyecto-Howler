@@ -132,8 +132,8 @@ VALUES
 INSERT INTO users (first_name, last_name, id_gender, birthday, country, email, pass, registered_at, updated_at, premium)
 VALUES 
 	('Agustin', 'Beber', 1, '1998-10-30', 'Argentina', 'agustinbeber1998@gmail.com', 'NUI432NBD', '2022-01-01', '2022-01-02', 1),
-	('Blas Martin', 'Urbanas', 1, '2003-05-31', 'Argentina', 'supersaiyangoto@nani.com.jp', 'DJN672JDN', '2022-05-12', '2022-05-12', 1),
-    ('Ian Ezequiel', 'Urbanas', 1, '1998-07-29', 'Argentina', 'elseñordelanoche@uwuonichan.com.ru', 'OLP235GEF', '2022-11-27', '2022-11-30', 1),
+	('Blas Martin', 'Urbanas', 1, '2003-05-31', 'Japon', 'supersaiyangoto@nani.com.jp', 'DJN672JDN', '2022-05-12', '2022-05-12', 1),
+    ('Ian Ezequiel', 'Urbanas', 1, '1998-07-29', 'Rusia', 'elseñordelanoche@uwuonichan.com.ru', 'OLP235GEF', '2022-11-27', '2022-11-30', 1),
     ('Victoria Celsa', 'Rinaldi', 2, '1998-05-18', 'Argentina', 'lacorrecorre@tuneleada.com', 'NKS249NDF', '2023-04-08', '2023-04-08', 1),
     ('Carolina Giselle', 'Ramos Sosoniuk', 2, '1995-10-12', 'Argentina', 'lareina@gmail.com', 'KLP218CSF', '2022-01-01', '2022-01-02', 1),
     ('Tomas', 'Rencz', 1, '1999-04-12', 'Argentina', 'totornz@gmail.com', 'PCJ234BCJ', '2023-06-13', '2023-06-13', 0),
@@ -144,16 +144,16 @@ VALUES
 
 INSERT INTO user_profile (id_user, username, profile_img, updated_at)
 VALUES
-	(1, 'Wolfy', NULL, '2022-01-01'),
-    (2, 'Blasters', NULL, '2022-05-12'),
-    (3, 'O homem da noite', NULL, '2022-11-27'),
-    (4, 'ToririUWU', NULL, '2023-04-08'),
-    (5, 'Messirve', NULL, '2022-01-01'),
-    (6, 'Tomate', NULL, '2023-06-13'),
-    (7, 'Rebellion', NULL, '2024-11-22'),
-    (8, 'LSK', NULL, '2023-08-18'),
-    (9, 'Jilly', NULL, '2023-09-11'),
-    (10, 'Witcher', NULL, '2022-03-04');
+	(1, 'Wolfy', 'https://wallpaperaccess.com/full/2812458.jpg', '2022-01-01'),
+    (2, 'Blasters', 'https://lh3.googleusercontent.com/proxy/3pCFO68LCDFFpCp0vBLVFrTU7cPVt538SUXduP5mle2rzveM7-zX0Jd2kke0BRPKodZGMVertI4U_GDgyP-k0k3uLZ29W3HpnTtd2xFinNyUQ3tIkMwqcYirOYbpNvyAHnW5btGxBWjsyfpZs2Ox', '2022-05-12'),
+    (3, 'O homem da noite', 'https://i.pinimg.com/originals/95/84/d2/9584d2af48173963b7e5eaf9164a7893.jpg', '2022-11-27'),
+    (4, 'ToririUWU', 'https://e1.pxfuel.com/desktop-wallpaper/763/181/desktop-wallpaper-victoria-de-angelis-r-celebritytongues2-victoria-de-angelis-thumbnail.jpg', '2023-04-08'),
+    (5, 'Messirve', 'https://i.pinimg.com/736x/96/ff/cf/96ffcf5ccea9fc39275b035c0474d379.jpg', '2022-01-01'),
+    (6, 'Tomate', 'https://c4.wallpaperflare.com/wallpaper/411/11/741/soccer-boca-juniors-emblem-logo-hd-wallpaper-preview.jpg', '2023-06-13'),
+    (7, 'Rebellion', 'https://w0.peakpx.com/wallpaper/976/389/HD-wallpaper-devil-may-cry-devil-may-cry-5-dante-devil-may-cry.jpg', '2024-11-22'),
+    (8, 'LSK', 'https://motionbgs.com/media/1205/leon-s-kennedy.jpg', '2023-08-18'),
+    (9, 'Jilly', 'https://wallpapers.com/images/hd/jill-valentine-in-action-iavcmo3hhq118rlg.jpg', '2023-09-11'),
+    (10, 'Witcher', 'https://wallpapercosmos.com/w/full/8/5/d/197-3840x2160-desktop-4k-the-witcher-game-background-photo.jpg', '2022-03-04');
 
 INSERT INTO premium_membership (membership, price, block_ads, without_conection, allowed_users, parental_control, kids_mode, discount)
 VALUES
@@ -375,11 +375,10 @@ BEGIN
     WHERE email = NEW.email;
 
     IF email_count > 0 THEN
-        SIGNAL SQLSTATE '45000'
+        SIGNAL SQLSTATE '45000' 
         SET MESSAGE_TEXT = 'El usuario ya se encuentra registrado.';
     END IF;
-END;
-//
+END //
 
 -- GENERACIÓN DE STORED PROCEDURES
 
@@ -387,6 +386,7 @@ DELIMITER //
 CREATE PROCEDURE setup_user(
     IN p_first_name VARCHAR(255),
     IN p_last_name VARCHAR(255),
+    IN p_user_name VARCHAR(255),
     IN p_gender VARCHAR(255),
     IN p_birthday DATE,
     IN p_country VARCHAR(255),
@@ -394,13 +394,21 @@ CREATE PROCEDURE setup_user(
     IN p_pass VARCHAR(255))
 BEGIN
 	DECLARE p_id_gender INT;
-	
+	DECLARE p_id_user INT;
+    
     SELECT id INTO p_id_gender 
     FROM gender
     WHERE gender_name = p_gender;
 
     INSERT INTO users (first_name, last_name, id_gender, birthday, country, email, pass, registered_at, updated_at, premium)
     VALUES (p_first_name, p_last_name, p_id_gender, p_birthday, p_country, p_email, p_pass, NOW(), NOW(), 0);
+    
+    SELECT id INTO p_id_user 
+    FROM users
+    WHERE email = p_email;
+    
+    INSERT INTO user_profile (id_user, username, updated_at)
+    VALUES (p_id_user, p_user_name, NOW());
 END //
 
 DELIMITER //
