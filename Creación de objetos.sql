@@ -1,5 +1,3 @@
--- OBJETOS
-
 -- GENERACIÓN DE VISTAS
 
 CREATE VIEW v_premium_users AS
@@ -101,18 +99,18 @@ BEGIN
     WHERE email = NEW.email;
 
     IF email_count > 0 THEN
-        SIGNAL SQLSTATE '45000'
+        SIGNAL SQLSTATE '45000' 
         SET MESSAGE_TEXT = 'El usuario ya se encuentra registrado.';
     END IF;
-END;
-//
+END //
 
 -- GENERACIÓN DE STORED PROCEDURES
 
 DELIMITER //
 CREATE PROCEDURE setup_user(
-    IN p_firts_name VARCHAR(255),
+    IN p_first_name VARCHAR(255),
     IN p_last_name VARCHAR(255),
+    IN p_user_name VARCHAR(255),
     IN p_gender VARCHAR(255),
     IN p_birthday DATE,
     IN p_country VARCHAR(255),
@@ -120,13 +118,21 @@ CREATE PROCEDURE setup_user(
     IN p_pass VARCHAR(255))
 BEGIN
 	DECLARE p_id_gender INT;
-	
+	DECLARE p_id_user INT;
+    
     SELECT id INTO p_id_gender 
     FROM gender
     WHERE gender_name = p_gender;
 
     INSERT INTO users (first_name, last_name, id_gender, birthday, country, email, pass, registered_at, updated_at, premium)
-    VALUES (p_firts_name, p_last_name, p_id_gender, p_birthday, p_country, p_email, p_pass, NOW(), NOW(), 0);
+    VALUES (p_first_name, p_last_name, p_id_gender, p_birthday, p_country, p_email, p_pass, NOW(), NOW(), 0);
+    
+    SELECT id INTO p_id_user 
+    FROM users
+    WHERE email = p_email;
+    
+    INSERT INTO user_profile (id_user, username, updated_at)
+    VALUES (p_id_user, p_user_name, NOW());
 END //
 
 DELIMITER //
