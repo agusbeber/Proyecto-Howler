@@ -1,34 +1,42 @@
 -- GENERACIÓN DE VISTAS
 
 CREATE VIEW v_premium_users AS
-SELECT u.id AS user_id, 
-	CONCAT(u.first_name, ' ', u.last_name) AS "name", 
-    u.email, pm.membership, 
-    pm.price, pm.block_ads, 
-    pm.without_conection, 
-    pm.allowed_users, 
-    pm.parental_control, 
-    pm.kids_mode, 
-    pm.discount
+SELECT u.id AS "User id", 
+	CONCAT(u.first_name, ' ', u.last_name) AS "Name", 
+    u.email AS "Email",
+    pm.membership AS "Membership", 
+    pm.price AS "Price", 
+    CASE WHEN pm.block_ads = 1 THEN 'X' ELSE NULL 
+	END AS "Ad block",
+    CASE WHEN pm.without_conection = 1 THEN 'X' ELSE NULL 
+	END AS "Without conection",
+    pm.allowed_users AS "Allowed users",
+    CASE WHEN pm.parental_control = 1 THEN 'X' ELSE NULL 
+	END AS "Parental control", 
+    CASE WHEN pm.kids_mode = 1 THEN 'X' ELSE NULL 
+	END AS "Kids mode",
+    CASE WHEN pm.discount = 1 THEN 'X' ELSE NULL 
+	END AS "Discount"
 FROM users u
 JOIN premium_users pu ON u.id = pu.id_user
-JOIN premium_membership pm ON pu.id_membership = pm.id;
+JOIN premium_membership pm ON pu.id_membership = pm.id
+WHERE pu.ended_at IS NULL;
 
 CREATE VIEW v_popular_songs AS
-SELECT a.artist_name, 
-	s.song_name, 
-    s.views
+SELECT a.artist_name AS "Artist", 
+	s.song_name AS "Song", 
+    s.views AS "Views"
 FROM artists a
 JOIN songs s ON a.id = s.id_artist
 ORDER BY a.artist_name, s.views DESC;
 
 CREATE VIEW v_public_playlists AS
-SELECT p.id AS playlist_id, 
-	p.playlist_name, 
-    p.pl_description, 
-    CONCAT(u.first_name, ' ', u.last_name) AS "name", 
-    s.song_name, 
-    s.duration_sec
+SELECT p.id AS "Playlist id", 
+	p.playlist_name AS "Playlist", 
+    p.pl_description AS "Description", 
+    CONCAT(u.first_name, ' ', u.last_name) AS "User", 
+    s.song_name AS "Song", 
+    s.duration_sec AS "Duration"
 FROM playlists p
 JOIN users u ON p.id_user = u.id
 JOIN playlists_content pc ON p.id = pc.id_list
@@ -36,18 +44,18 @@ JOIN songs s ON pc.id_song = s.id
 WHERE p.private = 0;
 
 CREATE VIEW v_artists_by_genre AS
-SELECT g.genre_name, 
-	a.artist_name, 
-    a.monthly_listeners, 
-    a.country
+SELECT g.genre_name AS "Genre", 
+	a.artist_name AS "Artist", 
+    a.monthly_listeners AS "Monthly listeners", 
+    a.country AS "Country"
 FROM genres g
 JOIN artists a ON g.id = a.id_genre;
 
 CREATE VIEW v_user_activity AS
-SELECT u.id AS user_id, 
-	CONCAT(u.first_name, ' ', u.last_name) AS "name",
-    MAX(up.updated_at) AS last_profile_update, 
-    MAX(p.created_at) AS last_playlist_created
+SELECT u.id AS "User id", 
+	CONCAT(u.first_name, ' ', u.last_name) AS "Name",
+    MAX(up.updated_at) AS "Last profile update", 
+    MAX(p.created_at) AS "Last playlist created"
 FROM users u
 LEFT JOIN user_profile up ON u.id = up.id_user
 LEFT JOIN playlists p ON u.id = p.id_user
