@@ -1,8 +1,8 @@
 -- CREACIÓN Y SELECCIÓN DE ESQUEMA
 
-CREATE SCHEMA howler_model;
+CREATE SCHEMA howler;
 
-USE howler_model;
+USE howler;
 
 -- CREACIÓN DE TABLAS
 
@@ -369,7 +369,7 @@ BEGIN
 		SIGNAL SQLSTATE '45000'
 		SET MESSAGE_TEXT = 'El usuario posee una membresía activa.';
     END IF;
-END //
+END; //
 
 DELIMITER //
 CREATE TRIGGER check_exist_user
@@ -386,7 +386,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' 
         SET MESSAGE_TEXT = 'El usuario ya se encuentra registrado.';
     END IF;
-END //
+END; //
 
 -- GENERACIÓN DE STORED PROCEDURES
 
@@ -417,7 +417,7 @@ BEGIN
     
     INSERT INTO user_profile (id_user, username, updated_at)
     VALUES (p_id_user, p_user_name, NOW());
-END //
+END; //
 
 DELIMITER //
 CREATE PROCEDURE set_premium_on(
@@ -430,7 +430,7 @@ BEGIN
     UPDATE users
     SET premium = TRUE
     WHERE id = p_id_user;
-END //
+END; //
 
 DELIMITER //
 CREATE PROCEDURE set_premium_off(
@@ -444,7 +444,7 @@ BEGIN
     UPDATE users
     SET premium = FALSE
     WHERE id = p_id_user;
-END //
+END; //
 
 -- GENERACIÓN DE FUNCIONES
 
@@ -460,7 +460,7 @@ BEGIN
     WHERE pc.id_list = id_list;
     
     RETURN total_duration;
-END //
+END; //
 
 DELIMITER //
 CREATE FUNCTION premium_active_days(f_id_user INT) RETURNS INT
@@ -474,7 +474,7 @@ BEGIN
     AND ended_at IS NULL;
     
     RETURN days_premium;
-END //
+END; //
 
 DELIMITER //
 CREATE FUNCTION premium_inactive_days(f_id_user INT, suscripcion INT) RETURNS INT
@@ -491,7 +491,7 @@ BEGIN
 	LIMIT suscripcion, 1;
     
     RETURN days_premium;
-END //
+END; //
 
 DELIMITER //
 CREATE FUNCTION age(f_id_user INT) RETURNS INT
@@ -504,5 +504,25 @@ BEGIN
 	WHERE id = f_id_user;
     
     RETURN years;
-END //
+END; //
 
+DELIMITER //
+CREATE FUNCTION active_suscription(f_id_user INT) RETURNS VARCHAR(50)
+DETERMINISTIC
+BEGIN
+	DECLARE f_value INT;
+	DECLARE f_premium VARCHAR(50);
+    
+	SELECT COUNT(id) INTO f_value
+    FROM premium_users
+    WHERE id_user = f_id_user
+    AND ended_at IS NULL;
+    
+    IF f_value = 1 THEN
+		SET f_premium = 'Usuario Premium';
+	ELSE 
+		SET f_premium = 'Usuario No Premium';
+	END IF;
+    
+	RETURN f_premium;
+END; //
