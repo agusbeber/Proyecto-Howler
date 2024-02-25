@@ -472,25 +472,28 @@ BEGIN
     FROM premium_users
     WHERE id_user = f_id_user
     AND ended_at IS NULL;
-    
-    RETURN days_premium;
-END; //
-
-DELIMITER //
-CREATE FUNCTION premium_active_days(f_id_user INT) RETURNS INT
-DETERMINISTIC
-BEGIN	
-    DECLARE days_premium INT;
-
-    SELECT DATEDIFF(NOW(), started_at) INTO days_premium
-    FROM premium_users
-    WHERE id_user = f_id_user
-    AND ended_at IS NULL;
         
 	IF days_premium IS NULL THEN
         SIGNAL SQLSTATE '45000' 
         SET MESSAGE_TEXT = 'El usuario ingresado no posee una suscripción activa';
     END IF;
+    
+    RETURN days_premium;
+END; //
+
+DELIMITER //
+CREATE FUNCTION premium_inactive_days(f_id_user INT, suscripcion INT) RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE days_premium INT;
+    SET suscripcion = suscripcion - 1;
+
+	SELECT DATEDIFF(ended_at, started_at) INTO days_premium
+	FROM premium_users
+	WHERE id_user = f_id_user
+	AND ended_at IS NOT NULL
+	ORDER BY ended_at DESC
+	LIMIT suscripcion, 1;
     
     RETURN days_premium;
 END; //
