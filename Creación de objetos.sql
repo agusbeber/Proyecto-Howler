@@ -196,6 +196,11 @@ BEGIN
     FROM premium_users
     WHERE id_user = f_id_user
     AND ended_at IS NULL;
+        
+	IF days_premium IS NULL THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'El usuario ingresado no posee una suscripción activa';
+    END IF;
     
     RETURN days_premium;
 END; //
