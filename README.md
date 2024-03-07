@@ -7,11 +7,16 @@
 ### 🌐Versión
 - 0.9
 
-### ⚙Tecnologías Utilizadas
-- SQL
+### 💻Tecnologías Utilizadas
 
-### ⚡Motor
-- MySQL
+### ⚙Heramientas Utilizadas
+- MySQL Workbench
+- Diagrams
+- Google Sheets
+- Google Docs
+- Github
+- Photoshop
+- Power BI
   
 ## Descripción del Proyecto
 La temática elegida para la base de datos parte como una aplicación de distribución de música, utilizando el esquema de Spotify como base. Se planea trabajar con datos desde registro de usuarios, creación de playlists y canciones publicadas por artistas, hasta sistema de gestión para membresías premium y envío de notificaciones.
