@@ -70,7 +70,7 @@ CREATE TABLE songs (
 CREATE TABLE playlists (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     playlist_name VARCHAR(255) NOT NULL,
-    pl_description VARCHAR(255),
+    playlist_description VARCHAR(255),
     id_user INT NOT NULL,
     created_at DATETIME NOT NULL,
     private BOOL NOT NULL);
@@ -79,7 +79,45 @@ CREATE TABLE playlists_content (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     id_list INT NOT NULL,
     id_song INT NOT NULL,
-    pl_order INT NOT NULL);
+    content_order INT NOT NULL);
+    
+CREATE TABLE media_history (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_user INT NOT NULL,
+    id_song INT,
+    listen_datetime DATETIME NOT NULL,
+    listen_duration_sec INT NOT NULL);
+
+CREATE TABLE notifications (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    id_user INT NOT NULL,
+    id_template INT NOT NULL,
+    notif_subject VARCHAR(255) NOT NULL,
+    message VARCHAR(255) NOT NULL,
+    notif_status VARCHAR(255) NOT NULL,
+    sent_at DATETIME NOT NULL);
+    
+CREATE TABLE notification_template (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    notif_description VARCHAR(255) NOT NULL,
+    notif_type  VARCHAR(255) NOT NULL,
+    template VARCHAR(255) NOT NULL);
+    
+CREATE TABLE notification_preferences (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    id_user INT NOT NULL,
+    id_channel INT NOT NULL,
+    debt_enabled BOOLEAN NOT NULL,
+    media_enabled BOOLEAN NOT NULL,
+    events_enabled BOOLEAN NOT NULL,
+    friends_enabled BOOLEAN NOT NULL,
+    offers_enabled BOOLEAN NOT NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL);
+    
+CREATE TABLE notification_channels (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    notif_channel VARCHAR(255) NOT NULL);
 
 -- GENERACIÓN DE VINCULACIONES FK
     
@@ -118,6 +156,30 @@ FOREIGN KEY (id_list) REFERENCES playlists (id);
 ALTER TABLE playlists_content
 ADD CONSTRAINT fk_playlists_content_songs
 FOREIGN KEY (id_song) REFERENCES songs (id);
+
+ALTER TABLE media_history
+ADD CONSTRAINT fk_media_history_users
+FOREIGN KEY (id_user) REFERENCES users (id);
+
+ALTER TABLE media_history
+ADD CONSTRAINT fk_media_history_songs
+FOREIGN KEY (id_song) REFERENCES songs (id);
+
+ALTER TABLE notifications
+ADD CONSTRAINT fk_notifications_users
+FOREIGN KEY (id_user) REFERENCES users (id);
+
+ALTER TABLE notifications
+ADD CONSTRAINT fk_notifications_templates
+FOREIGN KEY (id_template) REFERENCES notification_template (id);
+
+ALTER TABLE notification_preferences
+ADD CONSTRAINT fk_notification_preferences_users
+FOREIGN KEY (id_user) REFERENCES users (id);
+
+ALTER TABLE notification_preferences
+ADD CONSTRAINT fk_notification_preferences_channels
+FOREIGN KEY (id_channel) REFERENCES notification_channels (id);
 
 -- INSERCIÓN DE DATOS
 
@@ -194,10 +256,20 @@ VALUES
     ('MGK', 2, 12839652, 'Estados Unidos'),
     ('Meduza', 5, 19755048, 'Italia'),
     ('Sheryl Crow', 7, 7634196, 'Estados Unidos'),
-    ('Mozart', 10, 1051448, 'Austria'),
+    ('Nirvana', 2, 31958412, 'Estados Unidos'),
     ('Billie Eilish', 1, 66990026, 'Estados Unidos'),
     ('Fito Paez', 2, 4235752, 'Argentina'),
-    ('Usher', 4, 45662134, 'Estados Unidos');
+    ('Usher', 4, 45662134, 'Estados Unidos'),
+	('Adele', 4, 45004213, 'Reino Unido'),
+    ('Ed Sheeran', 4, 50004213, 'Reino Unido'),
+    ('Taylor Swift', 1, 55007546, 'Estados Unidos'),
+    ('Kanye West', 3, 35000845, 'Estados Unidos'),
+    ('Beyoncé', 3, 60008464, 'Estados Unidos'),
+    ('Bruno Mars', 1, 40004758, 'Estados Unidos'),
+    ('Lady Gaga', 5, 35006345, 'Estados Unidos'),
+    ('Justin Bieber', 1, 60007435, 'Canadá'),
+    ('Coldplay', 2, 30003644, 'Reino Unido'),
+    ('Drake', 3, 70000754, 'Canadá');
     
 INSERT INTO songs (song_name, id_artist, duration_sec, released_at, views)
 VALUES
@@ -224,10 +296,10 @@ VALUES
     ('If It Makes You Happy', 6, 245, '1996-09-03', 14000000),
     ('Soak Up The Sun', 6, 230, '2002-03-25', 16000000),
     ('Everyday Is A Winding Road', 6, 235, '1996-12-02', 17000000),
-    ('Eine kleine Nachtmusik', 7, 300, '1787-08-10', 2000000),
-    ('Symphony No. 40', 7, 420, '1788-07-25', 1800000),
-    ('Requiem', 7, 360, '1791-01-02', 2100000),
-    ('Rondo Alla Turca', 7, 280, '1784-01-26', 1900000),
+	('Smells Like Teen Spirit', 7, 301, '1991-09-10', 1000000000),
+	('Come as You Are', 7, 219, '1991-09-24', 750000000),
+	('Lithium', 7, 257, '1991-07-15', 500000000),
+	('Heart-Shaped Box', 7, 267, '1993-08-30', 600000000),
     ('Bad Guy', 8, 194, '2019-03-29', 30000000),
     ('Therefore I Am', 8, 210, '2020-11-12', 25000000),
     ('Ocean Eyes', 8, 200, '2016-11-18', 28000000),
@@ -239,15 +311,62 @@ VALUES
     ('Yeah!', 10, 250, '2004-01-27', 40000000),
     ('Burn', 10, 245, '2004-03-21', 35000000),
     ('Confessions Part II', 10, 230, '2004-06-01', 38000000),
-    ('U Remind Me', 10, 215, '2001-05-21', 32000000);
+    ('U Remind Me', 10, 215, '2001-05-21', 32000000),
+    ('Hello', 1, 295, '2015-10-23', 250000000),
+    ('Someone Like You', 1, 285, '2011-09-29', 350000000),
+    ('Rolling in the Deep', 1, 228, '2010-11-29', 450000000),
+    ('Set Fire to the Rain', 1, 242, '2011-01-04', 300000000),
+    ('Shape of You', 2, 234, '2017-01-06', 500000000),
+    ('Perfect', 2, 263, '2017-03-03', 400000000),
+    ('Castle on the Hill', 2, 261, '2017-01-06', 350000000),
+    ('Thinking Out Loud', 2, 281, '2014-06-20', 550000000),
+    ('Love Story', 3, 231, '2008-09-12', 400000000),
+    ('You Belong with Me', 3, 242, '2008-11-04', 300000000),
+    ('Blank Space', 3, 231, '2014-08-18', 600000000),
+    ('Shake It Off', 3, 219, '2014-08-18', 500000000),
+    ('Stronger', 4, 195, '2007-02-19', 200000000),
+    ('Gold Digger', 4, 207, '2005-07-17', 250000000),
+    ('Heartless', 4, 233, '2008-11-04', 300000000),
+    ('All of the Lights', 4, 300, '2010-11-22', 350000000),
+    ('Halo', 5, 235, '2008-01-20', 350000000),
+    ('Crazy in Love', 5, 220, '2003-05-14', 300000000),
+    ('Irreplaceable', 5, 210, '2006-10-23', 400000000),
+    ('Formation', 5, 263, '2016-04-23', 450000000),
+    ('Locked Out of Heaven', 6, 233, '2012-10-01', 200000000),
+    ('Just the Way You Are', 6, 221, '2010-07-20', 300000000),
+    ('Grenade', 6, 223, '2010-09-28', 250000000),
+    ('Uptown Funk', 6, 269, '2014-11-10', 600000000),
+    ('Bad Romance', 7, 294, '2009-10-26', 400000000),
+    ('Shallow', 7, 215, '2018-10-05', 600000000),
+    ('Poker Face', 7, 223, '2008-09-26', 500000000),
+    ('Born This Way', 7, 281, '2011-02-11', 550000000),
+    ('Baby', 8, 214, '2010-01-18', 750000000),
+    ('Sorry', 8, 200, '2015-10-22', 900000000),
+    ('Love Yourself', 8, 233, '2015-11-09', 800000000),
+    ('What Do You Mean?', 8, 204, '2015-08-28', 700000000),
+    ('Viva la Vida', 9, 243, '2008-05-25', 150000000),
+    ('Fix You', 9, 297, '2005-09-05', 180000000),
+    ('Adventure of a Lifetime', 9, 273, '2015-11-06', 200000000),
+    ('The Scientist', 9, 298, '2002-11-11', 100000000),
+    ('In My Feelings', 10, 218, '2018-07-10', 800000000),
+    ('God''s Plan', 10, 213, '2018-01-19', 900000000),
+    ('Hotline Bling', 10, 267, '2015-07-31', 700000000),
+    ('One Dance', 10, 174, '2016-04-05', 600000000);
 
-INSERT INTO playlists (playlist_name, pl_description, id_user, created_at, private)
+INSERT INTO playlists (playlist_name, playlist_description, id_user, created_at, private)
 VALUES
 	('Trappers', 'Playlist para los que les gusta el trap de verdad', 1, '2024-01-01', 0),
     ('Rock&Roll', 'Rockeros, esta es su playlist', 7, '2023-01-17', 1),
-    ('MisPopitos', 'Hola Toronjistas, vengan a mi playlist', 4, '2024-02-01', 0);
+    ('MisPopitos', 'Hola Toronjistas, vengan a mi playlist', 4, '2024-02-01', 0),
+    ('Favoritos', 'Mis canciones favoritas', 1, '2023-05-12', 0),
+    ('Chill', 'Melodías relajantes para un día tranquilo', 2, '2022-09-18', 1),
+    ('Workout', 'Eleva tu energía con estos temas', 3, '2023-07-01', 0),
+    ('Viajes', 'Canciones para viajar', 4, '2022-12-30', 0),
+    ('Éxitos', 'Clásicos nostálgicos', 5, '2023-08-15', 1),
+    ('Party Playlist', 'Para tu próxima fiesta', 6, '2022-11-20', 0),
+    ('Música para Estudiar', 'Música para concentrarse', 7, '2023-03-05', 1);
     
-INSERT INTO playlists_content (id_list, id_song, pl_order)
+INSERT INTO playlists_content (id_list, id_song, content_order)
 VALUES
 	(1, 5, 1),
     (1, 6, 2),
@@ -272,12 +391,169 @@ VALUES
     (3, 28, 5),
     (3, 29, 6),
     (3, 30, 7),
-    (3, 31, 8);
+    (3, 31, 8),
+    (1, 1, 1),
+    (1, 2, 2),
+    (1, 3, 3),
+    (1, 4, 4),
+    (2, 5, 1),
+    (2, 6, 2),
+    (2, 7, 3),
+    (2, 8, 4),
+    (3, 9, 1),
+    (3, 10, 2),
+    (3, 11, 3),
+    (3, 12, 4),
+    (4, 13, 1),
+    (4, 14, 2),
+    (4, 15, 3),
+    (4, 16, 4),
+    (5, 17, 1),
+    (5, 18, 2),
+    (5, 19, 3),
+    (5, 20, 4),
+    (6, 21, 1),
+    (6, 22, 2),
+    (6, 23, 3),
+    (6, 24, 4),
+    (7, 25, 1),
+    (7, 26, 2),
+    (7, 27, 3),
+    (7, 28, 4);
+    
+INSERT INTO media_history (id_user, id_song, listen_datetime, listen_duration_sec)
+VALUES
+	(1, 5, '2024-02-20 10:15:00', 181),
+	(2, 12, '2024-02-20 11:30:00', 184),
+	(3, 17, '2024-02-20 12:45:00', 199),
+	(4, 22, '2024-02-20 14:00:00', 220),
+	(5, 29, '2024-02-20 15:15:00', 190),
+	(6, 4, '2024-02-20 16:30:00', 206),
+	(7, 9, '2024-02-20 17:45:00', 207),
+	(8, 14, '2024-02-20 19:00:00', 168),
+	(9, 19, '2024-02-20 20:15:00', 197),
+	(10, 24, '2024-02-20 21:30:00', 283),
+	(1, 30, '2024-02-21 10:15:00', 186),
+	(2, 3, '2024-02-21 11:30:00', 207),
+	(3, 8, '2024-02-21 12:45:00', 206),
+	(4, 13, '2024-02-21 14:00:00', 170),
+	(5, 18, '2024-02-21 15:15:00', 175),
+	(6, 23, '2024-02-21 16:30:00', 221),
+	(7, 28, '2024-02-21 17:45:00', 182),
+	(8, 2, '2024-02-21 19:00:00', 187),
+	(9, 7, '2024-02-21 20:15:00', 192),
+	(10, 12, '2024-02-21 21:30:00', 178),
+	(1, 17, '2024-02-22 10:15:00', 191),
+	(2, 22, '2024-02-22 11:30:00', 217),
+	(3, 27, '2024-02-22 12:45:00', 260),
+	(4, 4, '2024-02-22 14:00:00', 205),
+	(5, 9, '2024-02-22 15:15:00', 206),
+	(6, 14, '2024-02-22 16:30:00', 167),
+	(7, 19, '2024-02-22 17:45:00', 198),
+	(8, 24, '2024-02-22 19:00:00', 284),
+	(9, 29, '2024-02-22 20:15:00', 197),
+	(10, 1, '2024-02-22 21:30:00', 192),
+	(1, 1, '2024-02-28 08:00:00', 194),
+	(1, 5, '2024-02-28 08:30:00', 184),
+	(1, 9, '2024-02-28 09:00:00', 200),
+	(1, 13, '2024-02-28 09:30:00', 174),
+	(1, 17, '2024-02-28 10:00:00', 199),
+	(1, 21, '2024-02-28 10:30:00', 234),
+	(1, 25, '2024-02-28 11:00:00', 219),
+	(2, 2, '2024-02-28 08:00:00', 188),
+	(2, 6, '2024-02-28 08:30:00', 196),
+	(2, 10, '2024-02-28 09:00:00', 162),
+	(2, 14, '2024-02-28 09:30:00', 164),
+	(2, 18, '2024-02-28 10:00:00', 181),
+	(2, 22, '2024-02-28 10:30:00', 220),
+	(2, 26, '2024-02-28 11:00:00', 257),
+	(3, 3, '2024-02-28 08:00:00', 207),
+	(3, 7, '2024-02-28 08:30:00', 188),
+	(3, 11, '2024-02-28 09:00:00', 192),
+	(1, 5, '2023-12-12 10:15:00', 184),
+	(2, 12, '2023-11-02 11:30:00', 175),
+	(3, 17, '2023-10-20 12:45:00', 198),
+	(4, 22, '2023-09-30 14:00:00', 213),
+	(5, 29, '2023-10-08 15:15:00', 197),
+	(6, 4, '2023-09-22 16:30:00', 201),
+	(7, 9, '2023-11-15 17:45:00', 204),
+	(8, 14, '2023-10-10 19:00:00', 162),
+	(9, 19, '2023-10-05 20:15:00', 202),
+	(10, 24, '2023-11-27 21:30:00', 290),
+	(1, 30, '2023-10-17 10:15:00', 180),
+	(2, 3, '2023-10-25 11:30:00', 205),
+	(3, 8, '2023-11-12 12:45:00', 200),
+	(4, 13, '2023-11-03 14:00:00', 171),
+	(5, 18, '2023-11-18 15:15:00', 183),
+	(6, 23, '2023-09-29 16:30:00', 218),
+	(7, 28, '2023-10-24 17:45:00', 179),
+	(8, 2, '2023-11-05 19:00:00', 185),
+	(9, 7, '2023-11-14 20:15:00', 194),
+	(10, 12, '2023-11-19 21:30:00', 175),
+	(1, 17, '2023-10-21 10:15:00', 197),
+	(2, 22, '2023-11-11 11:30:00', 216),
+	(3, 27, '2023-10-29 12:45:00', 260),
+	(4, 4, '2023-10-13 14:00:00', 207),
+	(5, 9, '2023-11-22 15:15:00', 200),
+	(6, 14, '2023-10-02 16:30:00', 161),
+	(7, 19, '2023-09-24 17:45:00', 203),
+	(8, 24, '2023-10-19 19:00:00', 280),
+	(9, 29, '2023-11-06 20:15:00', 200),
+	(10, 1, '2023-10-16 21:30:00', 200),
+	(1, 1, '2023-11-28 08:00:00', 191),
+	(1, 5, '2023-11-23 08:30:00', 183),
+	(1, 9, '2023-09-28 09:00:00', 202),
+	(1, 13, '2023-11-25 09:30:00', 178),
+	(1, 17, '2023-11-30 10:00:00', 198),
+	(1, 21, '2023-10-04 10:30:00', 230),
+	(1, 25, '2023-11-14 11:00:00', 219),
+	(2, 2, '2023-11-01 08:00:00', 192),
+	(2, 6, '2023-12-10 08:30:00', 202),
+	(2, 10, '2023-10-26 09:00:00', 170),
+	(2, 14, '2023-10-15 09:30:00', 170),
+	(2, 18, '2023-10-01 10:00:00', 183),
+	(2, 22, '2023-10-28 10:30:00', 213),
+	(2, 26, '2023-10-06 11:00:00', 257),
+	(3, 3, '2023-11-09 08:00:00', 203),
+	(3, 7, '2023-11-20 08:30:00', 192),
+	(3, 11, '2023-11-12 09:00:00', 198);
+
+INSERT INTO notification_template (notif_description, notif_type, template)
+VALUES
+    ('Recordatorio de pago', 'debt', '¡Hola {USER}! Te recordamos que tienes una deuda pendiente de ${DEBT}. Por favor, realiza el pago lo antes posible para evitar inconvenientes.'),
+    ('Nuevo evento', 'event', '¡Hola {USER}! Te informamos que hay un nuevo evento próximo. No te lo pierdas.'),
+    ('Recomendación Amigos', 'friend', 'Hola {USER}, hemos encontrado a personas que pueden interesarte. ¿Quieres agregar nuevos amigos?'),
+    ('Recomendación Música', 'music', '{USER}, ¿escuchaste la nueva canción de tu artista favorito? ¡No te lo pierdas!');
+
+INSERT INTO notifications (id_user, id_template, notif_subject, message, notif_status, sent_at)
+VALUES
+    (1, 1, 'Recordatorio de pago', '¡Hola Agustín! Te recordamos que tienes una deuda pendiente de $799. Por favor, realiza el pago lo antes posible para evitar inconvenientes.', 'Abierto', '2024-01-01'),
+    (8, 3, 'Nuevo follow', 'Hola Leon S, hemos encontrado a personas que pueden interesarte. ¿Quieres agregar nuevos amigos?', 'Enviado', '2024-01-05'),
+    (2, 4, 'Recomendación Música', 'Blas, ¿escuchaste la nueva canción de tu artista favorito? ¡No te lo pierdas!', 'Enviado', '2024-01-05');
+
+INSERT INTO notification_channels (notif_channel)
+VALUES
+    ('email'),
+    ('push'),
+    ('email_push');
+
+INSERT INTO notification_preferences (id_user, id_channel, debt_enabled, media_enabled, events_enabled, friends_enabled, offers_enabled, created_at, updated_at)
+VALUES
+    (1, 3, 1, 1, 1, 1, 1, '2022-01-01', NOW()),
+    (2, 3, 1, 1, 1, 1, 1, '2022-05-12', NOW()),
+    (3, 3, 1, 1, 1, 1, 1, '2022-11-27', NOW()),
+    (4, 3, 1, 1, 1, 1, 1, '2023-04-08', NOW()),
+    (5, 3, 1, 1, 1, 1, 1, '2022-01-01', NOW()),
+    (6, 3, 1, 1, 1, 1, 1, '2024-11-22', NOW()),
+    (7, 3, 1, 1, 1, 1, 1, '2023-08-18', NOW()),
+    (8, 3, 1, 1, 1, 1, 1, '2023-08-18', NOW()),
+    (9, 3, 1, 1, 1, 1, 1, '2023-09-11', NOW()),
+    (10, 3, 1, 1, 1, 1, 1, '2022-03-04', NOW());
 
 -- GENERACIÓN DE VISTAS
 
 CREATE VIEW v_premium_users AS
-SELECT u.id AS "User id", 
+SELECT u.id AS "userId", 
 	CONCAT(u.first_name, ' ', u.last_name) AS "Name", 
     u.email AS "Email",
     pm.membership AS "Membership", 
@@ -309,7 +585,7 @@ ORDER BY a.artist_name, s.views DESC;
 CREATE VIEW v_public_playlists AS
 SELECT p.id AS "Playlist id", 
 	p.playlist_name AS "Playlist", 
-    p.pl_description AS "Description", 
+    p.playlist_description AS "Description", 
     CONCAT(u.first_name, ' ', u.last_name) AS "User", 
     s.song_name AS "Song", 
     s.duration_sec AS "Duration"
@@ -337,56 +613,16 @@ LEFT JOIN user_profile up ON u.id = up.id_user
 LEFT JOIN playlists p ON u.id = p.id_user
 GROUP BY u.id;
 
--- GENERACIÓN DE TRIGGERS
+CREATE VIEW v_songs_views AS
+SELECT CONCAT(u.first_name, ' ', u.last_name) AS "User", 
+    s.song_name AS "Song", 
+    s.duration_sec AS "Duration", 
+    mh.listen_datetime AS "Listened Date", 
+    mh.listen_duration_sec AS "Listened Time"
+FROM media_history mh
+JOIN songs s ON mh.id_song = s.id
+JOIN users u ON u.id = mh.id_user;
 
-DELIMITER //
-CREATE TRIGGER update_users
-BEFORE UPDATE ON users
-FOR EACH ROW
-SET NEW.updated_at = NOW();
-//
-
-DELIMITER //
-CREATE TRIGGER update_users_profile
-BEFORE UPDATE ON user_profile
-FOR EACH ROW
-SET NEW.updated_at = NOW();
-//
-
-DELIMITER //
-CREATE TRIGGER check_premium_user
-BEFORE INSERT ON premium_users
-FOR EACH ROW
-BEGIN
-    DECLARE exist_count INT;
-    
-    SELECT COUNT(*) INTO exist_count
-    FROM premium_users
-    WHERE id_user = NEW.id_user
-    AND ended_at IS NULL;
-
-    IF exist_count > 0 THEN
-		SIGNAL SQLSTATE '45000'
-		SET MESSAGE_TEXT = 'El usuario posee una membresía activa.';
-    END IF;
-END; //
-
-DELIMITER //
-CREATE TRIGGER check_exist_user
-BEFORE INSERT ON users
-FOR EACH ROW
-BEGIN
-    DECLARE email_count INT;
-
-    SELECT COUNT(*) INTO email_count
-    FROM users
-    WHERE email = NEW.email;
-
-    IF email_count > 0 THEN
-        SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = 'El usuario ya se encuentra registrado.';
-    END IF;
-END; //
 
 -- GENERACIÓN DE STORED PROCEDURES
 
@@ -444,6 +680,191 @@ BEGIN
     UPDATE users
     SET premium = FALSE
     WHERE id = p_id_user;
+END; //
+
+DELIMITER //
+CREATE PROCEDURE add_media_history(
+    IN p_id_user INT,
+    IN p_id_song INT,
+    IN p_listen_duration_sec INT)
+BEGIN
+    DECLARE existing_row INT;
+
+    SELECT COUNT(*) INTO existing_row
+    FROM media_history
+    WHERE id_song = p_id_song 
+    AND id_user = p_id_user;
+    
+    IF existing_row = 0 THEN
+        INSERT INTO media_history (id_user, id_song, listen_datetime, listen_duration_sec)
+        VALUES (p_id_user, p_id_song, NOW(), p_listen_duration_sec);
+    ELSE
+        UPDATE media_history
+        SET listen_datetime = NOW(),
+			listen_duration_sec = p_listen_duration_sec
+        WHERE id_song = p_id_song 
+        AND id_user = p_id_user;
+    END IF;
+END; //
+
+DELIMITER //
+CREATE PROCEDURE send_notification (
+    IN p_id_user INT, 
+    IN p_id_template INT)
+BEGIN
+    DECLARE msg VARCHAR(255);
+    DECLARE sbj VARCHAR(255);
+    DECLARE usr VARCHAR(255);
+    DECLARE dbt DECIMAL(10,2) DEFAULT 0;
+    DECLARE exist INT;
+
+    SELECT notif_description INTO sbj
+    FROM notification_template
+    WHERE id = p_id_template;
+
+    SELECT template INTO msg
+    FROM notification_template
+    WHERE id = p_id_template;
+
+    SELECT first_name INTO usr
+    FROM users
+    WHERE id = p_id_user;
+    
+    SELECT COUNT(*) INTO exist
+    FROM premium_users
+    WHERE id_user = p_id_user
+    AND ended_at IS NULL;
+
+	IF p_id_template = 1 AND exist = 0 THEN
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'El usuario no posee deudas ya que no posee una membresía activa.';
+    END IF;
+    
+    IF p_id_template = 1 AND exist = 1 THEN
+		SELECT price INTO dbt
+		FROM premium_membership
+		WHERE id IN (SELECT id_membership FROM premium_users WHERE id_user = p_id_user);
+        
+		INSERT INTO notifications (id_user, id_template, notif_subject, message, notif_status, sent_at)
+		VALUES
+			(p_id_user, p_id_template, sbj, REPLACE(REPLACE(msg, '{USER}', usr), '{DEBT}', dbt), 'Enviado', NOW());
+	ELSE
+		INSERT INTO notifications (id_user, id_template, notif_subject, message, notif_status, sent_at)
+		VALUES
+			(p_id_user, p_id_template, sbj, REPLACE(msg, '{USER}', usr), 'Enviado', NOW());
+	END IF;
+END;//
+
+-- GENERACIÓN DE TRIGGERS
+
+DELIMITER //
+CREATE TRIGGER update_users
+BEFORE UPDATE ON users
+FOR EACH ROW
+SET NEW.updated_at = NOW();
+//
+
+DELIMITER //
+CREATE TRIGGER update_users_profile
+BEFORE UPDATE ON user_profile
+FOR EACH ROW
+SET NEW.updated_at = NOW();
+//
+
+DELIMITER //
+CREATE TRIGGER update_notification_preferences
+BEFORE UPDATE ON notification_preferences
+FOR EACH ROW
+SET NEW.updated_at = NOW();
+//
+
+DELIMITER //
+CREATE TRIGGER check_premium_user
+BEFORE INSERT ON premium_users
+FOR EACH ROW
+BEGIN
+    DECLARE exist_count INT;
+    
+    SELECT COUNT(*) INTO exist_count
+    FROM premium_users
+    WHERE id_user = NEW.id_user
+    AND ended_at IS NULL;
+
+    IF exist_count > 0 THEN
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'El usuario posee una membresía activa.';
+    END IF;
+END; //
+
+DELIMITER //
+CREATE TRIGGER check_exist_user
+BEFORE INSERT ON users
+FOR EACH ROW
+BEGIN
+    DECLARE email_count INT;
+
+    SELECT COUNT(*) INTO email_count
+    FROM users
+    WHERE email = NEW.email;
+
+    IF email_count > 0 THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'El usuario ya se encuentra registrado.';
+    END IF;
+END; //
+
+DELIMITER //
+CREATE TRIGGER up_insert_views
+AFTER INSERT ON media_history
+FOR EACH ROW
+BEGIN
+    UPDATE songs
+    SET views = views + 1
+    WHERE id = NEW.id_song;
+END; //
+
+DELIMITER //
+CREATE TRIGGER up_update_views
+AFTER UPDATE ON media_history
+FOR EACH ROW
+BEGIN
+	UPDATE songs
+    SET views = views + 1
+    WHERE id = NEW.id_song;
+END; //
+
+DELIMITER //
+CREATE TRIGGER check_insert_duration
+BEFORE INSERT ON media_history
+FOR EACH ROW
+BEGIN
+	DECLARE duration INT;
+    
+    SELECT duration_sec INTO duration
+    FROM songs
+    WHERE id = NEW.id_song;
+    
+    IF duration <= NEW.listen_duration_sec THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'La duración registrada es mayor a la duración de la canción en contexto.';
+    END IF;
+END; //
+
+DELIMITER //
+CREATE TRIGGER check_update_duration
+BEFORE UPDATE ON media_history
+FOR EACH ROW
+BEGIN
+	DECLARE duration INT;
+    
+    SELECT duration_sec INTO duration
+    FROM songs
+    WHERE id = NEW.id_song;
+    
+    IF duration <= NEW.listen_duration_sec THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'La duración registrada es mayor a la duración de la canción en contexto.';
+    END IF;
 END; //
 
 -- GENERACIÓN DE FUNCIONES
@@ -531,3 +952,16 @@ BEGIN
     
 	RETURN f_premium;
 END; //
+
+DELIMITER //
+CREATE FUNCTION notification_count(f_id_user INT) RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE count INT;
+    
+    SELECT COUNT(id) INTO count
+    FROM notifications
+    WHERE id_user = f_id_user;
+    
+    RETURN count;
+END;//
