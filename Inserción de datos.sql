@@ -16,7 +16,7 @@ VALUES
     ('Victoria Celsa', 'Rinaldi', 2, '1998-05-18', 'Argentina', 'lacorrecorre@tuneleada.com', 'NKS249NDF', '2023-04-08', '2023-04-08', 1),
     ('Carolina Giselle', 'Ramos Sosoniuk', 2, '1995-10-12', 'Argentina', 'lareina@gmail.com', 'KLP218CSF', '2022-01-01', '2022-01-02', 1),
     ('Tomas', 'Rencz', 1, '1999-04-12', 'Argentina', 'totornz@gmail.com', 'PCJ234BCJ', '2023-06-13', '2023-06-13', 0),
-    ('Dante', 'Sparda', 3, '1856-06-06', 'Italia', 'demon_killer@dmc.com.it', 'PSK234CJW', '2024-11-22', '2024-11-23', 1),
+    ('Dante', 'Sparda', 3, '1856-06-06', 'Italia', 'demon_killer@dmc.com.it', 'PSK234CJW', '2024-01-22', '2024-01-23', 1),
     ('Leon S', 'Kennedy', 1, '1977-09-09', 'Estados Unidos', 'lskennedy@gmail.com', 'PLD252NCJ', '2023-08-18', '2023-08-18', 0),
 	('Jill', 'Valentine', 2, '1971-02-14', 'Estados Unidos', 'jill_v@gmail.com', 'YHU276KJS', '2023-09-11', '2023-09-11', 0),
 	('Gerald', 'de Rivia', 5, '1967-05-10', 'Polonia', 'elbrujodelrio@gmail.com.pl', 'WYI726CUJ', '2022-03-04', '2022-06-04', 0);
@@ -339,14 +339,34 @@ INSERT INTO notification_template (notif_description, notif_type, template)
 VALUES
     ('Recordatorio de pago', 'debt', '¡Hola {USER}! Te recordamos que tienes una deuda pendiente de ${DEBT}. Por favor, realiza el pago lo antes posible para evitar inconvenientes.'),
     ('Nuevo evento', 'event', '¡Hola {USER}! Te informamos que hay un nuevo evento próximo. No te lo pierdas.'),
-    ('Recomendación Amigos', 'friend', 'Hola {USER}, hemos encontrado a personas que pueden interesarte. ¿Quieres agregar nuevos amigos?'),
-    ('Recomendación Música', 'music', '{USER}, ¿escuchaste la nueva canción de tu artista favorito? ¡No te lo pierdas!');
+    ('Recomendación amigos', 'friend', 'Hola {USER}, hemos encontrado a personas que pueden interesarte. ¿Quieres agregar nuevos amigos?'),
+    ('Recomendación música', 'music', '{USER}, ¿escuchaste la nueva canción de tu artista favorito? ¡No te lo pierdas!');
 
 INSERT INTO notifications (id_user, id_template, notif_subject, message, notif_status, sent_at)
 VALUES
-    (1, 1, 'Recordatorio de pago', '¡Hola Agustín! Te recordamos que tienes una deuda pendiente de $799. Por favor, realiza el pago lo antes posible para evitar inconvenientes.', 'Abierto', '2024-01-01'),
-    (8, 3, 'Nuevo follow', 'Hola Leon S, hemos encontrado a personas que pueden interesarte. ¿Quieres agregar nuevos amigos?', 'Enviado', '2024-01-05'),
-    (2, 4, 'Recomendación Música', 'Blas, ¿escuchaste la nueva canción de tu artista favorito? ¡No te lo pierdas!', 'Enviado', '2024-01-05');
+    (1, 1, 'Recordatorio de pago', '¡Hola Agustín! Te recordamos que tienes una deuda pendiente de $799. Por favor, realiza el pago lo antes posible para evitar inconvenientes.', 'Leído', '2023-01-01'),
+    (8, 3, 'Recomendación amigos', 'Hola Leon S, hemos encontrado a personas que pueden interesarte. ¿Quieres agregar nuevos amigos?', 'Enviado', '2024-01-05'),
+    (2, 4, 'Recomendación música', 'Blas Martin, ¿escuchaste la nueva canción de tu artista favorito? ¡No te lo pierdas!', 'Enviado', '2023-05-05'),
+    (10, 2, 'Nuevo evento', '¡Hola Gerald! Te informamos que hay un nuevo evento próximo. No te lo pierdas.', 'Enviado', '2023-01-02 09:30:00'),
+    (3, 3, 'Recomendación amigos', 'Hola Ian Ezequiel, hemos encontrado a personas que pueden interesarte. ¿Quieres agregar nuevos amigos?', 'Enviado', '2023-07-03 11:15:00'),
+    (4, 4, 'Recomendación música', '¡Hola Victoria Celsa! ¿Escuchaste la nueva canción de tu artista favorito? ¡No te lo pierdas!', 'Leído', '2024-01-04 13:45:00'),
+    (5, 1, 'Recordatorio de pago', '¡Hola Carolina Giselle! Te recordamos que tienes una deuda pendiente de $799. Por favor, realiza el pago lo antes posible para evitar inconvenientes.', 'Leído', '2024-01-05 15:20:00'),
+    (6, 2, 'Nuevo evento', '¡Hola Tomas! Te informamos que hay un nuevo evento próximo. No te lo pierdas.', 'Leído', '2024-01-06 17:10:00'),
+    (10, 3, 'Recomendación amigos', 'Hola Gerald, hemos encontrado a personas que pueden interesarte. ¿Quieres agregar nuevos amigos?', 'Recibido', '2024-01-07 19:00:00'),
+    (5, 4, 'Recomendación música', '¡Hola Carolina Giselle! ¿Escuchaste la nueva canción de tu artista favorito? ¡No te lo pierdas!', 'Leído', '2024-01-08 20:45:00'),
+    (9, 1, 'Nuevo evento', '¡Hola Jill! Te informamos que hay un nuevo evento próximo. No te lo pierdas.', 'Leído', '2024-01-06 17:10:00'),
+    (10, 2, 'Nuevo evento', '¡Hola Gerald! Te informamos que hay un nuevo evento próximo. No te lo pierdas.', 'Enviado', '2023-01-10 08:15:00'),
+    (1, 3, 'Recomendación amigos', 'Hola Agustín, hemos encontrado a personas que pueden interesarte. ¿Quieres agregar nuevos amigos?', 'Leído', '2024-01-11 10:00:00'),
+    (10, 4, 'Recomendación música', '¡Hola Gerald! ¿Escuchaste la nueva canción de tu artista favorito? ¡No te lo pierdas!', 'Error', '2024-01-12 12:20:00'),
+    (3, 1, 'Recordatorio de pago', '¡Hola Ian Ezequiel! Te recordamos que tienes una deuda pendiente de $329. Por favor, realiza el pago lo antes posible para evitar inconvenientes.', 'Leído', '2024-01-13 14:45:00'),
+    (4, 2, 'Nuevo evento', '¡Hola Victoria Celsa! Te informamos que hay un nuevo evento próximo. No te lo pierdas.', 'Enviado', '2024-01-14 16:30:00'),
+    (5, 3, 'Recomendación amigos', 'Hola Carolina Giselle, hemos encontrado a personas que pueden interesarte. ¿Quieres agregar nuevos amigos?', 'Enviado', '2024-01-15 18:15:00'),
+    (6, 4, 'Recomendación música', '¡Hola Tomas! ¿Escuchaste la nueva canción de tu artista favorito? ¡No te lo pierdas!', 'Error', '2024-01-16 20:00:00'),
+    (7, 1, 'Recordatorio de pago', '¡Hola Dante! Te recordamos que tienes una deuda pendiente de $599. Por favor, realiza el pago lo antes posible para evitar inconvenientes.', 'Enviado', '2024-01-01 22:30:00'),
+    (5, 2, 'Nuevo evento', '¡Hola Carolina Giselle! Te informamos que hay un nuevo evento próximo. No te lo pierdas.', 'Enviado', '2024-01-18 08:45:00'),
+    (9, 3, 'Recomendación amigos', 'Hola Jill, hemos encontrado a personas que pueden interesarte. ¿Quieres agregar nuevos amigos?', 'Leído', '2024-01-19 10:20:00'),
+    (10, 4, 'Recomendación música', '¡Hola Gerald! ¿Escuchaste la nueva canción de tu artista favorito? ¡No te lo pierdas!', 'Leído', '2023-05-20 12:00:00');
+
 
 INSERT INTO notification_channels (notif_channel)
 VALUES
@@ -357,12 +377,12 @@ VALUES
 INSERT INTO notification_preferences (id_user, id_channel, debt_enabled, media_enabled, events_enabled, friends_enabled, offers_enabled, created_at, updated_at)
 VALUES
     (1, 3, 1, 1, 1, 1, 1, '2022-01-01', NOW()),
-    (2, 3, 1, 1, 1, 1, 1, '2022-05-12', NOW()),
-    (3, 3, 1, 1, 1, 1, 1, '2022-11-27', NOW()),
-    (4, 3, 1, 1, 1, 1, 1, '2023-04-08', NOW()),
-    (5, 3, 1, 1, 1, 1, 1, '2022-01-01', NOW()),
-    (6, 3, 1, 1, 1, 1, 1, '2024-11-22', NOW()),
-    (7, 3, 1, 1, 1, 1, 1, '2023-08-18', NOW()),
-    (8, 3, 1, 1, 1, 1, 1, '2023-08-18', NOW()),
-    (9, 3, 1, 1, 1, 1, 1, '2023-09-11', NOW()),
-    (10, 3, 1, 1, 1, 1, 1, '2022-03-04', NOW());
+    (2, 2, 1, 0, 1, 1, 1, '2022-05-12', NOW()),
+    (3, 2, 1, 1, 0, 0, 0, '2022-11-27', NOW()),
+    (4, 1, 1, 0, 0, 1, 1, '2023-04-08', NOW()),
+    (5, 1, 1, 1, 0, 1, 1, '2022-01-01', NOW()),
+    (6, 3, 1, 1, 1, 0, 1, '2024-11-22', NOW()),
+    (7, 3, 1, 1, 0, 0, 1, '2023-08-18', NOW()),
+    (8, 2, 1, 1, 1, 1, 0, '2023-08-18', NOW()),
+    (9, 1, 1, 0, 0, 0, 1, '2023-09-11', NOW()),
+    (10, 2, 1, 1, 1, 1, 1, '2022-03-04', NOW());
