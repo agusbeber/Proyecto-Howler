@@ -1,7 +1,7 @@
 -- GENERACIÓN DE VISTAS
 
 CREATE VIEW v_premium_users AS
-SELECT u.id AS "User id", 
+SELECT u.id AS "userId", 
 	CONCAT(u.first_name, ' ', u.last_name) AS "Name", 
     u.email AS "Email",
     pm.membership AS "Membership", 
@@ -33,7 +33,7 @@ ORDER BY a.artist_name, s.views DESC;
 CREATE VIEW v_public_playlists AS
 SELECT p.id AS "Playlist id", 
 	p.playlist_name AS "Playlist", 
-    p.pl_description AS "Description", 
+    p.playlist_description AS "Description", 
     CONCAT(u.first_name, ' ', u.last_name) AS "User", 
     s.song_name AS "Song", 
     s.duration_sec AS "Duration"
@@ -61,56 +61,16 @@ LEFT JOIN user_profile up ON u.id = up.id_user
 LEFT JOIN playlists p ON u.id = p.id_user
 GROUP BY u.id;
 
--- GENERACIÓN DE TRIGGERS
+CREATE VIEW v_songs_views AS
+SELECT CONCAT(u.first_name, ' ', u.last_name) AS "User", 
+    s.song_name AS "Song", 
+    s.duration_sec AS "Duration", 
+    mh.listen_datetime AS "Listened Date", 
+    mh.listen_duration_sec AS "Listened Time"
+FROM media_history mh
+JOIN songs s ON mh.id_song = s.id
+JOIN users u ON u.id = mh.id_user;
 
-DELIMITER //
-CREATE TRIGGER update_users
-BEFORE UPDATE ON users
-FOR EACH ROW
-SET NEW.updated_at = NOW();
-//
-
-DELIMITER //
-CREATE TRIGGER update_users_profile
-BEFORE UPDATE ON user_profile
-FOR EACH ROW
-SET NEW.updated_at = NOW();
-//
-
-DELIMITER //
-CREATE TRIGGER check_premium_user
-BEFORE INSERT ON premium_users
-FOR EACH ROW
-BEGIN
-    DECLARE exist_count INT;
-    
-    SELECT COUNT(*) INTO exist_count
-    FROM premium_users
-    WHERE id_user = NEW.id_user
-    AND ended_at IS NULL;
-
-    IF exist_count > 0 THEN
-		SIGNAL SQLSTATE '45000'
-		SET MESSAGE_TEXT = 'El usuario posee una membresía activa.';
-    END IF;
-END; //
-
-DELIMITER //
-CREATE TRIGGER check_exist_user
-BEFORE INSERT ON users
-FOR EACH ROW
-BEGIN
-    DECLARE email_count INT;
-
-    SELECT COUNT(*) INTO email_count
-    FROM users
-    WHERE email = NEW.email;
-
-    IF email_count > 0 THEN
-        SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = 'El usuario ya se encuentra registrado.';
-    END IF;
-END; //
 
 -- GENERACIÓN DE STORED PROCEDURES
 
@@ -168,6 +128,191 @@ BEGIN
     UPDATE users
     SET premium = FALSE
     WHERE id = p_id_user;
+END; //
+
+DELIMITER //
+CREATE PROCEDURE add_media_history(
+    IN p_id_user INT,
+    IN p_id_song INT,
+    IN p_listen_duration_sec INT)
+BEGIN
+    DECLARE existing_row INT;
+
+    SELECT COUNT(*) INTO existing_row
+    FROM media_history
+    WHERE id_song = p_id_song 
+    AND id_user = p_id_user;
+    
+    IF existing_row = 0 THEN
+        INSERT INTO media_history (id_user, id_song, listen_datetime, listen_duration_sec)
+        VALUES (p_id_user, p_id_song, NOW(), p_listen_duration_sec);
+    ELSE
+        UPDATE media_history
+        SET listen_datetime = NOW(),
+			listen_duration_sec = p_listen_duration_sec
+        WHERE id_song = p_id_song 
+        AND id_user = p_id_user;
+    END IF;
+END; //
+
+DELIMITER //
+CREATE PROCEDURE send_notification (
+    IN p_id_user INT, 
+    IN p_id_template INT)
+BEGIN
+    DECLARE msg VARCHAR(255);
+    DECLARE sbj VARCHAR(255);
+    DECLARE usr VARCHAR(255);
+    DECLARE dbt DECIMAL(10,2) DEFAULT 0;
+    DECLARE exist INT;
+
+    SELECT notif_description INTO sbj
+    FROM notification_template
+    WHERE id = p_id_template;
+
+    SELECT template INTO msg
+    FROM notification_template
+    WHERE id = p_id_template;
+
+    SELECT first_name INTO usr
+    FROM users
+    WHERE id = p_id_user;
+    
+    SELECT COUNT(*) INTO exist
+    FROM premium_users
+    WHERE id_user = p_id_user
+    AND ended_at IS NULL;
+
+	IF p_id_template = 1 AND exist = 0 THEN
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'El usuario no posee deudas ya que no posee una membresía activa.';
+    END IF;
+    
+    IF p_id_template = 1 AND exist = 1 THEN
+		SELECT price INTO dbt
+		FROM premium_membership
+		WHERE id IN (SELECT id_membership FROM premium_users WHERE id_user = p_id_user);
+        
+		INSERT INTO notifications (id_user, id_template, notif_subject, message, notif_status, sent_at)
+		VALUES
+			(p_id_user, p_id_template, sbj, REPLACE(REPLACE(msg, '{USER}', usr), '{DEBT}', dbt), 'Enviado', NOW());
+	ELSE
+		INSERT INTO notifications (id_user, id_template, notif_subject, message, notif_status, sent_at)
+		VALUES
+			(p_id_user, p_id_template, sbj, REPLACE(msg, '{USER}', usr), 'Enviado', NOW());
+	END IF;
+END;//
+
+-- GENERACIÓN DE TRIGGERS
+
+DELIMITER //
+CREATE TRIGGER update_users
+BEFORE UPDATE ON users
+FOR EACH ROW
+SET NEW.updated_at = NOW();
+//
+
+DELIMITER //
+CREATE TRIGGER update_users_profile
+BEFORE UPDATE ON user_profile
+FOR EACH ROW
+SET NEW.updated_at = NOW();
+//
+
+DELIMITER //
+CREATE TRIGGER update_notification_preferences
+BEFORE UPDATE ON notification_preferences
+FOR EACH ROW
+SET NEW.updated_at = NOW();
+//
+
+DELIMITER //
+CREATE TRIGGER check_premium_user
+BEFORE INSERT ON premium_users
+FOR EACH ROW
+BEGIN
+    DECLARE exist_count INT;
+    
+    SELECT COUNT(*) INTO exist_count
+    FROM premium_users
+    WHERE id_user = NEW.id_user
+    AND ended_at IS NULL;
+
+    IF exist_count > 0 THEN
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'El usuario posee una membresía activa.';
+    END IF;
+END; //
+
+DELIMITER //
+CREATE TRIGGER check_exist_user
+BEFORE INSERT ON users
+FOR EACH ROW
+BEGIN
+    DECLARE email_count INT;
+
+    SELECT COUNT(*) INTO email_count
+    FROM users
+    WHERE email = NEW.email;
+
+    IF email_count > 0 THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'El usuario ya se encuentra registrado.';
+    END IF;
+END; //
+
+DELIMITER //
+CREATE TRIGGER up_insert_views
+AFTER INSERT ON media_history
+FOR EACH ROW
+BEGIN
+    UPDATE songs
+    SET views = views + 1
+    WHERE id = NEW.id_song;
+END; //
+
+DELIMITER //
+CREATE TRIGGER up_update_views
+AFTER UPDATE ON media_history
+FOR EACH ROW
+BEGIN
+	UPDATE songs
+    SET views = views + 1
+    WHERE id = NEW.id_song;
+END; //
+
+DELIMITER //
+CREATE TRIGGER check_insert_duration
+BEFORE INSERT ON media_history
+FOR EACH ROW
+BEGIN
+	DECLARE duration INT;
+    
+    SELECT duration_sec INTO duration
+    FROM songs
+    WHERE id = NEW.id_song;
+    
+    IF duration <= NEW.listen_duration_sec THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'La duración registrada es mayor a la duración de la canción en contexto.';
+    END IF;
+END; //
+
+DELIMITER //
+CREATE TRIGGER check_update_duration
+BEFORE UPDATE ON media_history
+FOR EACH ROW
+BEGIN
+	DECLARE duration INT;
+    
+    SELECT duration_sec INTO duration
+    FROM songs
+    WHERE id = NEW.id_song;
+    
+    IF duration <= NEW.listen_duration_sec THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'La duración registrada es mayor a la duración de la canción en contexto.';
+    END IF;
 END; //
 
 -- GENERACIÓN DE FUNCIONES
@@ -255,3 +400,16 @@ BEGIN
     
 	RETURN f_premium;
 END; //
+
+DELIMITER //
+CREATE FUNCTION notification_count(f_id_user INT) RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE count INT;
+    
+    SELECT COUNT(id) INTO count
+    FROM notifications
+    WHERE id_user = f_id_user;
+    
+    RETURN count;
+END;//
