@@ -1,9 +1,3 @@
--- CREACIÓN Y SELECCIÓN DE ESQUEMA
-
-CREATE SCHEMA howler_model;
-
-USE howler_model;
-
 -- CREACIÓN DE TABLAS
 
 CREATE TABLE users (
@@ -70,7 +64,7 @@ CREATE TABLE songs (
 CREATE TABLE playlists (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     playlist_name VARCHAR(255) NOT NULL,
-    pl_description VARCHAR(255),
+    playlist_description VARCHAR(255),
     id_user INT NOT NULL,
     created_at DATETIME NOT NULL,
     private BOOL NOT NULL);
@@ -79,7 +73,45 @@ CREATE TABLE playlists_content (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     id_list INT NOT NULL,
     id_song INT NOT NULL,
-    pl_order INT NOT NULL);
+    content_order INT NOT NULL);
+    
+CREATE TABLE media_history (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_user INT NOT NULL,
+    id_song INT,
+    listen_datetime DATETIME NOT NULL,
+    listen_duration_sec INT NOT NULL);
+
+CREATE TABLE notifications (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    id_user INT NOT NULL,
+    id_template INT NOT NULL,
+    notif_subject VARCHAR(255) NOT NULL,
+    message VARCHAR(255) NOT NULL,
+    notif_status VARCHAR(255) NOT NULL,
+    sent_at DATETIME NOT NULL);
+    
+CREATE TABLE notification_template (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    notif_description VARCHAR(255) NOT NULL,
+    notif_type  VARCHAR(255) NOT NULL,
+    template VARCHAR(255) NOT NULL);
+    
+CREATE TABLE notification_preferences (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    id_user INT NOT NULL,
+    id_channel INT NOT NULL,
+    debt_enabled BOOLEAN NOT NULL,
+    media_enabled BOOLEAN NOT NULL,
+    events_enabled BOOLEAN NOT NULL,
+    friends_enabled BOOLEAN NOT NULL,
+    offers_enabled BOOLEAN NOT NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL);
+    
+CREATE TABLE notification_channels (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    notif_channel VARCHAR(255) NOT NULL);
 
 -- GENERACIÓN DE VINCULACIONES FK
     
@@ -118,3 +150,27 @@ FOREIGN KEY (id_list) REFERENCES playlists (id);
 ALTER TABLE playlists_content
 ADD CONSTRAINT fk_playlists_content_songs
 FOREIGN KEY (id_song) REFERENCES songs (id);
+
+ALTER TABLE media_history
+ADD CONSTRAINT fk_media_history_users
+FOREIGN KEY (id_user) REFERENCES users (id);
+
+ALTER TABLE media_history
+ADD CONSTRAINT fk_media_history_songs
+FOREIGN KEY (id_song) REFERENCES songs (id);
+
+ALTER TABLE notifications
+ADD CONSTRAINT fk_notifications_users
+FOREIGN KEY (id_user) REFERENCES users (id);
+
+ALTER TABLE notifications
+ADD CONSTRAINT fk_notifications_templates
+FOREIGN KEY (id_template) REFERENCES notification_template (id);
+
+ALTER TABLE notification_preferences
+ADD CONSTRAINT fk_notification_preferences_users
+FOREIGN KEY (id_user) REFERENCES users (id);
+
+ALTER TABLE notification_preferences
+ADD CONSTRAINT fk_notification_preferences_channels
+FOREIGN KEY (id_channel) REFERENCES notification_channels (id);
