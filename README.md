@@ -27,6 +27,6 @@ La temática elegida para la base de datos parte como una aplicación de distrib
 
 #### [Detalle de tablas y columnas](https://docs.google.com/spreadsheets/d/1ISVfIx2EdfUp-l5D3Ln8lvDFxH0DXoDkp2Y8Hz0zgWc/edit?usp=sharing)
 
-#### [Script Completo](https://github.com/agusbeber/Proyecto-Howler/blob/main/main_project.sql)
+#### [Script Completo](https://github.com/agusbeber/Proyecto-Howler/blob/main/Script%20Completo.sql)
 
 #### [Generación de Métricas](https://github.com/agusbeber/Proyecto-Howler/blob/main/Consultas%20SELECT%20-%20Dashboard.sql)
