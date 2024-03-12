@@ -5,9 +5,7 @@
 ## Proyecto "Howler": Servicio de música
 
 ### 🌐Versión
-- 0.9
-
-### 💻Tecnologías Utilizadas
+- 1.0
 
 ### ⚙Heramientas Utilizadas
 - MySQL Workbench
