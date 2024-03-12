@@ -26,7 +26,7 @@ GROUP BY g.genre_name
 ORDER BY SUM(s.views) DESC;
 
 -- Canciones Escuchadas
-SELECT COUNT(DISTINCT mh.id_song) "Escuchadas", 
+SELECT COUNT(DISTINCT mh.id_song) AS "Escuchadas", 
 	COUNT(DISTINCT s.id) AS "Totales" 
 FROM media_history mh
 RIGHT JOIN songs s ON s.id = mh.id_song;
@@ -40,7 +40,7 @@ LIMIT 10;
 
 -- TOP 10 Canciones más escuchadas
 SELECT s.song_name AS "Canción", 
-	COUNT(mh.id_song) "Reproducciones"
+	COUNT(mh.id_song) AS "Reproducciones"
 FROM media_history mh
 JOIN songs s ON s.id = mh.id_song
 GROUP BY mh.id_song
@@ -55,12 +55,12 @@ FROM users u
 GROUP BY EXTRACT(YEAR FROM u.registered_at);
 
 -- Usuarios Activos
-SELECT COUNT(DISTINCT mh.id_user) "Activos"
+SELECT COUNT(DISTINCT mh.id_user) AS "Activos"
 FROM media_history mh;
 
 -- Usuarios Premium
-SELECT COUNT(DISTINCT pu.id_user) "Premium", 
-	COUNT(DISTINCT u.id) "Totales"
+SELECT COUNT(DISTINCT pu.id_user) AS "Premium", 
+	COUNT(DISTINCT u.id) AS "Totales"
 FROM premium_users pu
 RIGHT JOIN users u ON u.id = pu.id_user;
 
