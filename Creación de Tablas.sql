@@ -1,3 +1,9 @@
+-- CREACIÓN Y SELECCIÓN DE ESQUEMA
+
+CREATE SCHEMA howler;
+
+USE howler;
+
 -- CREACIÓN DE TABLAS
 
 CREATE TABLE users (
