@@ -1,3 +1,5 @@
+![howler-horiz](https://github.com/agusbeber/Proyecto-Howler/assets/121584072/498ae474-7b57-40bb-815c-f755fae87f61)
+
 # Proyecto Howler® :wolf:	
 #### Comisión: 50070
 #### Estudiante: Agustín Beber
