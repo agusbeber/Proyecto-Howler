@@ -2,7 +2,7 @@
 #### Comisión: 50070
 #### Estudiante: Agustín Beber
 
-## Proyecto "Howler": Servicio de música
+## Proyecto Howler® _Servicio de música_
 
 ### 🌐Versión
 - 1.0
@@ -17,16 +17,19 @@
 - Power BI
   
 ## Descripción del Proyecto
-La temática elegida para la base de datos parte como una aplicación de distribución de música, utilizando el esquema de Spotify como base. Se planea trabajar con datos desde registro de usuarios, creación de playlists y canciones publicadas por artistas, hasta sistema de gestión para membresías premium y envío de notificaciones.
+Este proyecto se centra en el desarrollo de una aplicación de distribución de música llamada Howler, que se inspira en el esquema de servicios como Spotify. Howler ofrece una amplia gama de funcionalidades, desde registro de usuarios y creación de playlists hasta sistema de gestión para membresías premium y envío de notificaciones.
 
-### ✔Avance
+## 📝Desarrollo
 
-#### [Documentación](https://docs.google.com/document/d/1p7k3XOFmAUkrP1VMrkSmQH0FqKdOvpfoe3hy8rGuxL4/edit?usp=drive_link)
+* [Documentación](https://docs.google.com/document/d/1p7k3XOFmAUkrP1VMrkSmQH0FqKdOvpfoe3hy8rGuxL4/edit?usp=drive_link)
 
-#### [Diagrama Entidad Relación (DER)](https://drive.google.com/file/d/1XpeX9rzh89zox724hccvjU0itxTWg6Mj/view?usp=sharing)
+* [Diagrama Entidad Relación (DER)](https://drive.google.com/file/d/1XpeX9rzh89zox724hccvjU0itxTWg6Mj/view?usp=sharing)
 
-#### [Detalle de tablas y columnas](https://docs.google.com/spreadsheets/d/1ISVfIx2EdfUp-l5D3Ln8lvDFxH0DXoDkp2Y8Hz0zgWc/edit?usp=sharing)
+* [Detalle de tablas y columnas](https://docs.google.com/spreadsheets/d/1ISVfIx2EdfUp-l5D3Ln8lvDFxH0DXoDkp2Y8Hz0zgWc/edit?usp=sharing)
 
-#### [Script Completo](https://github.com/agusbeber/Proyecto-Howler/blob/main/Script%20Completo.sql)
+* [Script Completo](https://github.com/agusbeber/Proyecto-Howler/blob/main/Script%20Completo.sql)
+  * [Creación de Tablas](https://github.com/agusbeber/Proyecto-Howler/blob/main/Creaci%C3%B3n%20de%20Tablas.sql)
+  * [Inserción de Datos](https://github.com/agusbeber/Proyecto-Howler/blob/main/Inserci%C3%B3n%20de%20Datos.sql)
+  * [Creación de Objetos](https://github.com/agusbeber/Proyecto-Howler/blob/main/Creaci%C3%B3n%20de%20Objetos.sql)
 
-#### [Generación de Métricas](https://github.com/agusbeber/Proyecto-Howler/blob/main/Consultas%20SELECT%20-%20Dashboard.sql)
+* [Generación de Métricas](https://github.com/agusbeber/Proyecto-Howler/blob/main/Creaci%C3%B3n%20de%20Informes)
