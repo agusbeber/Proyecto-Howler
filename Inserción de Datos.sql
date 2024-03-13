@@ -372,7 +372,7 @@ INSERT INTO notification_channels (notif_channel)
 VALUES
     ('email'),
     ('push'),
-    ('email_push');
+    ('emailPush');
 
 INSERT INTO notification_preferences (id_user, id_channel, debt_enabled, media_enabled, events_enabled, friends_enabled, offers_enabled, created_at, updated_at)
 VALUES
