@@ -4,18 +4,18 @@ CREATE VIEW v_premium_users AS
 SELECT u.id AS "userId", 
 	CONCAT(u.first_name, ' ', u.last_name) AS "Name", 
     u.email AS "Email",
-    pm.membership AS "Membership", 
-    pm.price AS "Price", 
-    CASE WHEN pm.block_ads = 1 THEN 'X' ELSE NULL 
+    pm.membership AS "Membership",
+    pm.price AS "Price",
+    CASE WHEN pm.block_ads = 1 THEN 'Y' ELSE 'N' 
 	END AS "Ad block",
-    CASE WHEN pm.without_conection = 1 THEN 'X' ELSE NULL 
+    CASE WHEN pm.without_conection = 1 THEN 'Y' ELSE 'N' 
 	END AS "Without conection",
     pm.allowed_users AS "Allowed users",
-    CASE WHEN pm.parental_control = 1 THEN 'X' ELSE NULL 
+    CASE WHEN pm.parental_control = 1 THEN 'Y' ELSE 'N' 
 	END AS "Parental control", 
-    CASE WHEN pm.kids_mode = 1 THEN 'X' ELSE NULL 
+    CASE WHEN pm.kids_mode = 1 THEN 'Y' ELSE 'N' 
 	END AS "Kids mode",
-    CASE WHEN pm.discount = 1 THEN 'X' ELSE NULL 
+    CASE WHEN pm.discount = 1 THEN 'Y' ELSE 'N' 
 	END AS "Discount"
 FROM users u
 JOIN premium_users pu ON u.id = pu.id_user
@@ -153,11 +153,15 @@ BEGIN
         WHERE id_song = p_id_song 
         AND id_user = p_id_user;
     END IF;
+		
+	UPDATE songs
+	SET views = views + 1
+	WHERE id = p_id_song;
 END; //
 
 DELIMITER //
 CREATE PROCEDURE send_notification (
-    IN p_id_user INT, 
+    IN p_id_user INT,
     IN p_id_template INT)
 BEGIN
     DECLARE msg VARCHAR(255);
@@ -259,26 +263,6 @@ BEGIN
         SIGNAL SQLSTATE '45000' 
         SET MESSAGE_TEXT = 'El usuario ya se encuentra registrado.';
     END IF;
-END; //
-
-DELIMITER //
-CREATE TRIGGER up_insert_views
-AFTER INSERT ON media_history
-FOR EACH ROW
-BEGIN
-    UPDATE songs
-    SET views = views + 1
-    WHERE id = NEW.id_song;
-END; //
-
-DELIMITER //
-CREATE TRIGGER up_update_views
-AFTER UPDATE ON media_history
-FOR EACH ROW
-BEGIN
-	UPDATE songs
-    SET views = views + 1
-    WHERE id = NEW.id_song;
 END; //
 
 DELIMITER //
