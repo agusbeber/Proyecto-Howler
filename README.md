@@ -16,7 +16,7 @@
 `Power BI`
   
 ## 💡DESCRIPCIÓN DEL PROYECTO
-Este proyecto representa un enfoque centrado en el desarrollo de una plataforma de distribución de música llamada Howler, creada con el fin de adaptar una serie de funcionalidades innovadoras y versátiles inspiradas en el modelo de negocio utilizado por servicios líderes como Spotify. Desde la etapa inicial de registro de usuarios hasta la personalización de listas de reproducción, la aplicación se esfuerza por ofrecer una diversidad de opciones que se adaptan a las preferencias y necesidades individuales. Asimismo, Howler no solo se limita a proporcionar acceso a contenido musical, sino que también integra un sistema de gestión de membresías premium, que a futuro permitirá a los suscriptores acceder a beneficios exclusivos y contenido adicional. Por último, el sistema de notificaciones de Howler se presenta como una herramienta eficaz para mantener a los usuarios informados sobre eventos, lanzamientos de álbumes y otras actualizaciones relevantes, enriqueciendo aún más su experiencia en la plataforma.
+Este proyecto tiene un enfoque centrado en el desarrollo de una plataforma de distribución de música llamada Howler, creada con el fin de adaptar una serie de funcionalidades innovadoras y versátiles inspiradas en el modelo de negocio utilizado por servicios líderes como Spotify. Desde la etapa inicial de registro de usuarios hasta la personalización de listas de reproducción, la aplicación se esfuerza por ofrecer una diversidad de opciones que se adaptan a las preferencias y necesidades individuales. Asimismo, Howler no solo se limita a proporcionar acceso a contenido musical, sino que también integra un sistema de gestión de membresías premium, que a futuro permitirá a los suscriptores acceder a beneficios exclusivos y contenido adicional. Por último, el sistema de notificaciones de Howler se presenta como una herramienta eficaz para mantener a los usuarios informados sobre eventos, lanzamientos de álbumes y otras actualizaciones relevantes, enriqueciendo aún más su experiencia en la plataforma.
 
 ### 📑DESARROLLO
 > [Documentación](https://docs.google.com/document/d/1p7k3XOFmAUkrP1VMrkSmQH0FqKdOvpfoe3hy8rGuxL4/edit?usp=drive_link)
@@ -33,6 +33,6 @@ Este proyecto representa un enfoque centrado en el desarrollo de una plataforma 
 
 > [Generación de Consultas](https://github.com/agusbeber/Proyecto-Howler/blob/main/Creaci%C3%B3n%20de%20Informes)
 
-> [Dashboard de Métricas](https://github.com/agusbeber/Proyecto-Howler/raw/main/Howler_PowerBI.pbix)
+> [Dashboard de Métricas](https://drive.google.com/file/d/1b8JZ_sOOXQ4zn_om1H1UUT_t9tgKpK7x/view?usp=sharing)
 
 
